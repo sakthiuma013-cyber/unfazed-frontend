@@ -48,34 +48,46 @@ export default function Dashboard() {
             Clinical Management Shortcuts
           </h2>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
-            
-            <Link to="/clients" style={actionCardStyle}>
-              <div style={iconBadgeStyle('#3D5A45')}>👥</div>
-              <h3 style={cardTitleStyle}>Client CRM Directory Logs</h3>
-              <p style={cardDescStyle}>Review inbound patient file matrices, forms intake tracking information, and consent stamps [INDEX].</p>
-            </Link>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+  
+  {/* CARD 1: CLIENT CRM DIRECTORY */}
+  <Link to="/clients" style={actionCardStyle}>
+    <div style={iconBadgeStyle('#3D5A45')}>👥</div>
+    <h3 style={cardTitleStyle}>Client CRM Directory Logs</h3>
+    <p style={cardDescStyle}>
+      Review inbound client profiles, keep track of digital intake forms, and manage secure liability consent tracking logs.
+    </p>
+  </Link>
 
-            <Link to="/schedule" style={actionCardStyle}>
-              <div style={iconBadgeStyle('#E07A5F')}>📅</div>
-              <h3 style={cardTitleStyle}>Availability Slots Matrix</h3>
-              <p style={cardDescStyle}>Open custom weekly calendar blocks, adjust timezones, and drop session interval buffers [INDEX].</p>
-            </Link>
+  {/* CARD 2: AVAILABILITY SLOTS MATRIX */}
+  <Link to="/schedule" style={actionCardStyle}>
+    <div style={iconBadgeStyle('#E07A5F')}>📅</div>
+    <h3 style={cardTitleStyle}>Availability Slots Matrix</h3>
+    <p style={cardDescStyle}>
+      Configure timezone-aware booking rules, schedule custom opening calendar blocks, and establish session interval buffers.
+    </p>
+  </Link>
 
-            <Link to="/notes" style={actionCardStyle}>
-              <div style={iconBadgeStyle('#F4A261')}>📝</div>
-              <h3 style={cardTitleStyle}>Encounter Notes Suite</h3>
-              <p style={cardDescStyle}>Compile treatment timeline histories inside secure encrypted medical SOAP format frames [INDEX].</p>
-            </Link>
+  {/* CARD 3: ENCOUNTER NOTES SUITE */}
+  <Link to="/notes" style={actionCardStyle}>
+    <div style={iconBadgeStyle('#F4A261')}>📝</div>
+    <h3 style={cardTitleStyle}>Encounter Notes Suite</h3>
+    <p style={cardDescStyle}>
+      Compile historical treatment timelines and draft secure session notes using clinical SOAP documentation templates.
+    </p>
+  </Link>
 
-            {/* NEW ROUTE ENTRY CARD FOR REAL-TIME COMMUNICATIONS */}
-            <Link to="/portal" style={actionCardStyle}>
-              <div style={iconBadgeStyle('#E07A5F')}>💬</div>
-              <h3 style={cardTitleStyle}>Live Message Hub</h3>
-              <p style={cardDescStyle}>Launch bidirectional communication channels with active clients using secure WebSockets nodes [INDEX].</p>
-            </Link>
+  {/* CARD 4: LIVE MESSAGE HUB */}
+  <Link to="/portal" style={actionCardStyle}>
+    <div style={iconBadgeStyle('#E07A5F')}>💬</div>
+    <h3 style={cardTitleStyle}>Live Message Hub</h3>
+    <p style={cardDescStyle}>
+      Open direct, end-to-end communication channels with active clients using secure real-time WebSocket nodes [INDEX].
+    </p>
+  </Link>
 
-          </div>
+</div>
+
         </div>
       </main>
     </div>

@@ -1,26 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
+import axiosInstance from '../../api/axiosInstance';
 import { Navbar } from '../../components/common/Navbar';
 import { CheckoutForm } from '../../components/payments/CheckoutForm';
 import { InvoiceView } from '../../components/payments/InvoiceView';
+import { ChatWindow } from '../../components/chat/ChatWindow';
 
 export default function BookingPage() {
+  const { user } = useContext(AuthContext);
+
   const [selectedSlot, setSelectedSlot] = useState(null);
-  const [activeTab, setActiveTab] = useState('about'); // Tabs: about, book, billing
+  const [activeTab, setActiveTab] = useState('about'); 
   const [settled, setSettled] = useState(false);
   const [paymentId, setPaymentId] = useState('');
   const [statusMessage, setStatusMessage] = useState({ text: '', type: '' });
+  const [assignedPractitioner, setAssignedPractitioner] = useState({ name: 'Loading Doctor Profile...', id: '' });
 
-  // Mock schedule interval blocks computed directly for the patient selection grid
+  const baseSessionRoomId = "room_session_9942";
+
+  useEffect(() => {
+    axiosInstance.get('/auth/my-therapist')
+      .then(res => {
+        if (res.data && res.data.therapist) {
+          setAssignedPractitioner({
+            name: res.data.therapist.name,
+            id: res.data.therapist.id
+          });
+        }
+      })
+      .catch(() => {
+        setAssignedPractitioner({
+          name: 'Dr. Sakthi Uma',
+          id: '66f1bc09a3bc765103ad9871'
+        });
+      });
+  }, [user]);
+
   const mockScheduleSlots = [
-    { id: 1, day: 'Monday', time: '09:00 - 09:45' },
-    { id: 2, day: 'Wednesday', time: '11:00 - 11:45' },
-    { id: 3, day: 'Friday', time: '15:00 - 15:45' }
+    { id: 1, day: 'Monday Session', time: '09:00 AM - 09:45 AM' },
+    { id: 2, day: 'Wednesday Checkpoint', time: '11:00 AM - 11:45 AM' },
+    { id: 3, day: 'Friday Follow-up', time: '03:00 PM - 03:45 PM' }
   ];
 
   const handleSlotConfirm = (slot) => {
     setSelectedSlot(slot.id);
     setStatusMessage({
-      text: `✅ Time slot verified and locked: ${slot.day} (${slot.time}). Proceed to billing tab if package settlement is required.`,
+      text: `📆 Care session held provisionally for ${slot.day} (${slot.time}). Settle dues in the billing panel to confirm.`,
       type: 'success'
     });
   };
@@ -29,58 +54,58 @@ export default function BookingPage() {
     <div style={{ minHeight: '100vh', background: '#FDFBF7', color: '#1E2922' }}>
       <Navbar />
       
-      {/* 🌿 WARM BOTANICAL PROFILE HERO BANNER */}
       <div style={{ background: 'linear-gradient(135deg, #3D5A45 0%, #2F4535 100%)', color: 'white', padding: '48px 40px', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '32px', margin: '0 0 8px 0', fontWeight: '700' }}>Dr. Amit Sharma</h1>
-        <p style={{ color: '#D8E2DC', fontSize: '16px', margin: '0 0 16px 0' }}>Consulting Clinical Psychologist & Behavioral Specialist</p>
+        <h1 style={{ fontSize: '32px', margin: '0 0 8px 0', fontWeight: '700' }}>Patient Wellness Dashboard</h1>
+        <p style={{ color: '#D8E2DC', fontSize: '16px', margin: '0 0 16px 0' }}>Welcome back to your secure AuraHealth health space</p>
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-          {['Anxiety Management', 'CBT Specialist', 'Occupational Burnout'].map((tag, i) => (
-            <span key={i} style={{ background: 'rgba(255,255,255,0.15)', padding: '4px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: '600' }}>{tag}</span>
-          ))}
+          <span style={{ background: 'rgba(255,255,255,0.15)', padding: '6px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: '700', letterSpacing: '0.02em' }}>
+            🔒 Verified Account Status: Active
+          </span>
         </div>
       </div>
 
       <main style={{ padding: '40px 24px', maxWidth: '1000px', margin: '0 auto', boxSizing: 'border-box' }}>
         
-        {/* --- Dynamic Status Feedback Message Banner --- */}
         {statusMessage.text && (
           <div style={{ padding: '14px 20px', borderRadius: '10px', fontSize: '14px', fontWeight: '600', marginBottom: '24px', border: '1px solid', backgroundColor: statusMessage.type === 'success' ? '#E8F5F3' : '#FDF0EC', borderColor: statusMessage.type === 'success' ? 'rgba(42, 157, 143, 0.2)' : 'rgba(224, 122, 95, 0.2)', color: statusMessage.type === 'success' ? '#2A9D8F' : '#E07A5F' }}>
             {statusMessage.text}
           </div>
         )}
 
-        {/* 📑 PATIENT ENGAGEMENT SECTION MENU NAVIGATION TABS */}
         <div style={{ display: 'flex', gap: '12px', borderBottom: '1px solid rgba(61, 90, 69, 0.12)', paddingBottom: '12px', marginBottom: '32px' }}>
-          {['about', 'book', 'billing'].map((tab) => (
-            <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: activeTab === tab ? '#3D5A45' : 'transparent', color: activeTab === tab ? '#FFFFFF' : '#5C6760', border: activeTab === tab ? 'none' : '1px solid rgba(61,90,69,0.2)', padding: '10px 20px', borderRadius: '8px', fontWeight: '700', fontSize: '14px', cursor: 'pointer', textTransform: 'capitalize', transition: 'all 0.2s' }}>
-              {tab === 'about' ? '📋 About & Bio' : tab === 'book' ? '📅 Schedule Sessions' : '💳 Package Billing'}
+          {['about', 'book', 'billing', 'chat'].map((tab) => (
+            <button key={tab} onClick={() => { setActiveTab(tab); setStatusMessage({ text: '', type: '' }); }} style={{ background: activeTab === tab ? '#3D5A45' : 'transparent', color: activeTab === tab ? '#FFFFFF' : '#5C6760', border: activeTab === tab ? 'none' : '1px solid rgba(61,90,69,0.2)', padding: '10px 20px', borderRadius: '8px', fontWeight: '700', fontSize: '14px', cursor: 'pointer', transition: 'all 0.2s' }}>
+              {tab === 'about' ? '📋 My Treatment Profile' : tab === 'book' ? '📅 Book Therapy Slots' : tab === 'billing' ? '💳 Invoices & Billing' : '💬 Live Practitioner Chat'}
             </button>
           ))}
         </div>
 
-        {/* 🔄 TAB DISPLAY DECISION MATRIX */}
-        <div className="natural-card" style={{ background: '#FFFFFF', padding: '32px', borderRadius: '14px', border: '1px solid rgba(61, 90, 69, 0.12)', boxShadow: '0 10px 25px -5px rgba(61, 90, 69, 0.03)' }}>
+        <div style={{ background: '#FFFFFF', padding: '32px', borderRadius: '14px', border: '1px solid rgba(61, 90, 69, 0.12)', boxShadow: '0 10px 25px -5px rgba(61, 90, 69, 0.03)' }}>
           
-          {/* TAB A: DETAILED BIOGRAPHY OVERVIEW */}
           {activeTab === 'about' && (
             <div>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', color: '#1E2922' }}>Professional Background Overview</h3>
-              <p style={{ color: '#5C6760', lineHeight: '1.6', fontSize: '15px', margin: '0 0 16px 0' }}>
-                Dr. Amit Sharma holds over 12 years of specialized mental health consulting experience [INDEX]. His clinical focus concentrates on supporting practitioners experiencing severe occupational burnout, corporate anxiety matrices, and lifestyle transition roadblocks [INDEX].
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', color: '#1E2922', fontWeight: '700' }}>Your Personal Care Plan Summary</h3>
+              <p style={{ color: '#5C6760', lineHeight: '1.6', fontSize: '15px', margin: '0 0 20px 0' }}>
+                This is your dedicated workspace where you can review ongoing progress strategies, book open appointment times with your clinical practitioner, and track treatment package invoices.
               </p>
-              <div style={{ background: '#F4F6F2', padding: '16px', borderRadius: '8px', fontSize: '14px', color: '#3D5A45' }}>
-                <strong>Languages Fluent:</strong> English, Hindi, Tamil
+              
+              <div style={{ display: 'flex', gap: '16px', borderTop: '1px solid rgba(61, 90, 69, 0.08)', paddingTop: '20px' }}>
+                <div style={{ flex: 1, background: '#E8F5F3', padding: '16px', borderRadius: '8px', fontSize: '14px', color: '#2A9D8F', fontWeight: '600' }}>
+                  👤 Assigned Practitioner: {assignedPractitioner.name}
+                </div>
+                <div style={{ flex: 1, background: '#F4F6F2', padding: '16px', borderRadius: '8px', fontSize: '14px', color: '#3D5A45' }}>
+                  🎯 Focus Track: Stress & Work-Life Calibration
+                </div>
               </div>
             </div>
           )}
 
-          {/* TAB B: INTERACTIVE TIME-SLOT CALENDAR ENGAGEMENT */}
           {activeTab === 'book' && (
             <div>
-              <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', color: '#1E2922' }}>Select Available Booking Units</h3>
-              <p style={{ color: '#5C6760', fontSize: '14px', marginBottom: '20px' }}>Choose an active consultation slot block below to register your placement instantly on the clinician's calendar ledger [INDEX].</p>
+              <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', color: '#1E2922', fontWeight: '700' }}>Select An Available Therapy Block</h3>
+              <p style={{ color: '#5C6760', fontSize: '14px', marginBottom: '20px' }}>Click an open time slot from your practitioner's calendar below to reserve an upcoming appointment unit instantly.</p>
               
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
                 {mockScheduleSlots.map((slot) => {
                   const isCurrent = selectedSlot === slot.id;
                   return (
@@ -94,24 +119,39 @@ export default function BookingPage() {
             </div>
           )}
 
-          {/* TAB C: SECURE CHECKOUT PROCESSING PILLARS */}
           {activeTab === 'billing' && (
             <div>
+              <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', color: '#1E2922', fontWeight: '700' }}>Outstanding Invoices</h3>
+              <p style={{ color: '#5C6760', fontSize: '14px', marginBottom: '24px' }}>Settle package fees or generate transaction tax receipts via our encrypted checkout desk.</p>
+              
               {settled ? (
                 <InvoiceView paymentRecordId={paymentId} />
               ) : (
                 <CheckoutForm 
                   amount={1500} 
-                  clientId="66f1bc20a3bc994205de1142" 
-                  therapistId="66f1bc09a3bc765103ad9871" 
+                  client_id={user?.id || user?._id || "66f1bc20a3bc994205de1142"} 
+                  therapist_id={assignedPractitioner.id || "66f1bc09a3bc765103ad9871"} 
                   onSuccess={(res) => {
                     setPaymentId(res.razorpay_payment_id || 'pay_sim_9988');
                     setSettled(true);
-                    setStatusMessage({ text: '⚡ Transaction captured successfully. Feel free to print your tax invoice structural file.', type: 'success' });
+                    setStatusMessage({ text: '⚡ Transaction settled successfully! Your official tax receipt invoice is rendered below.', type: 'success' });
                   }}
                   onError={(err) => setStatusMessage({ text: `❌ Processing Halt: ${err}`, type: 'error' })}
                 />
               )}
+            </div>
+          )}
+
+          {activeTab === 'chat' && (
+            <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+              <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', color: '#1E2922', fontWeight: '700' }}>Live Communication Terminal</h3>
+              <p style={{ color: '#5C6760', fontSize: '14px', marginBottom: '20px' }}>Exchange instant messages safely with your clinical practitioner over our secure, real-time messaging network.</p>
+              
+              <ChatWindow 
+                roomId={baseSessionRoomId}
+                userId={user?.id || user?._id || "client_ananya_iyer"}
+                userName={user?.name || "Harry Styles (Patient)"}
+              />
             </div>
           )}
 

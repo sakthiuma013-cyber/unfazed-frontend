@@ -1,18 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Navbar } from '../../components/common/Navbar';
 import { ChatWindow } from '../../components/chat/ChatWindow';
+import { AuthContext } from '../../context/AuthContext';
 
 export default function TherapistChat() {
-  // CRITICAL SYNC FIX: Matches the exact channel variables used in ClientPortal.jsx
+  const { user } = useContext(AuthContext);
+
   const sampleSharedRoomId = "room_session_9942";
-  const therapistId = "therapist_amit_sharma";
-  const therapistName = "Dr. Amit Sharma (Therapist)";
+  
+  // ⚡ DYNAMIC FALLBACK SYSTEM
+  // This explicitly strips out 'Amit Sharma' and checks who is actually logged into localStorage
+  const therapistId = user?.id || user?._id || "therapist_active_node";
+  const therapistName = user?.name ? `${user.name} (Therapist)` : "Dr. Sakthi Uma (Therapist)";
 
   return (
     <div style={{ minHeight: '100vh', background: '#FDFBF7' }}>
       <Navbar />
       <main style={{ padding: '40px 24px', maxWidth: '800px', margin: '0 auto', boxSizing: 'border-box' }}>
-        
         <header style={{ marginBottom: '32px' }}>
           <h2 style={{ fontSize: '28px', color: '#1E2922', fontWeight: '700', marginBottom: '6px' }}>
             Practitioner Communication Terminal
@@ -22,13 +26,11 @@ export default function TherapistChat() {
           </p>
         </header>
 
-        {/* MOUNTED SOCKET CONSOLE LINK */}
         <ChatWindow 
           roomId={sampleSharedRoomId} 
           userId={therapistId} 
           userName={therapistName} 
         />
-
       </main>
     </div>
   );
