@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
 import { Navbar } from '../../components/common/Navbar';
 import { AuthContext } from '../../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#FDFBF7' }}>
@@ -17,7 +18,7 @@ export default function Dashboard() {
           <div>
             <span style={{ fontSize: '13px', fontWeight: '700', color: '#3D5A45', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Workspace Control Suite</span>
             <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#1E2922', margin: '4px 0 0 0' }}>
-              Good day, {user?.name || 'Practitioner'}
+              Good day, {user?.name || 'Dr. Sakthi Uma'}
             </h1>
           </div>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '14px', fontWeight: '600' }}>
@@ -26,11 +27,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* 3-Column Vibrant Visual Metrics Row */}
+        {/* 3-Column Metrics Row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '40px' }}>
           <div style={{ padding: '24px', background: '#FFFFFF', borderRadius: '14px', border: '1px solid rgba(61, 90, 69, 0.12)', borderLeft: '5px solid #3D5A45', boxShadow: '0 10px 25px -5px rgba(61, 90, 69, 0.04)' }}>
             <div style={metricLabelStyle}>Enrolled Active Clients</div>
-            <div style={metricValueStyle}>05 <span style={{ fontSize: '14px', color: '#5C6760', fontWeight: '400' }}>/ 05 cap</span></div>
+            <div style={metricValueStyle}>03 <span style={{ fontSize: '14px', color: '#5C6760', fontWeight: '400' }}>/ 05 cap</span></div>
           </div>
           <div style={{ padding: '24px', background: '#FFFFFF', borderRadius: '14px', border: '1px solid rgba(61, 90, 69, 0.12)', borderLeft: '5px solid #E07A5F', boxShadow: '0 10px 25px -5px rgba(61, 90, 69, 0.04)' }}>
             <div style={metricLabelStyle}>Gross Income Log</div>
@@ -44,70 +45,70 @@ export default function Dashboard() {
 
         {/* Action Panel Workspace Framework Boards Layout */}
         <div>
-          <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#3D5A45', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '20px' }}>
+          <h2 style={{ fontSize: '14px', fontWeight: '700', color: '#3D5A45', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '20px' }}>
             Clinical Management Shortcuts
           </h2>
           
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
-  
-  {/* CARD 1: CLIENT CRM DIRECTORY */}
-  <Link to="/clients" style={actionCardStyle}>
-    <div style={iconBadgeStyle('#3D5A45')}>👥</div>
-    <h3 style={cardTitleStyle}>Client CRM Directory Logs</h3>
-    <p style={cardDescStyle}>
-      Review inbound client profiles, keep track of digital intake forms, and manage secure liability consent tracking logs.
-    </p>
-  </Link>
+          {/* COMPLETE 5-COLUMN STRUCTURAL INTERACTIVE LAYOUT GRID */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+            
+            {/* ⚡ SHORTCUT CARD 1: OVERRIDDEN FAIL-SAFE CLIENT CRM BUTTON TARGET */}
+            <button 
+              onClick={() => navigate('/clients')} 
+              style={{ ...actionCardStyle, textAlign: 'left', cursor: 'pointer', border: '1px solid rgba(61, 90, 69, 0.12)', width: '100%' }}
+            >
+              <div style={iconBadgeStyle('#3D5A45')}>👥</div>
+              <h3 style={cardTitleStyle}>Client CRM Directory Logs</h3>
+              <p style={cardDescStyle}>Review inbound client profiles, keep track of digital intake forms, and manage secure liability consent tracking logs.</p>
+            </button>
 
-  {/* CARD 2: AVAILABILITY SLOTS MATRIX */}
-  <Link to="/schedule" style={actionCardStyle}>
-    <div style={iconBadgeStyle('#E07A5F')}>📅</div>
-    <h3 style={cardTitleStyle}>Availability Slots Matrix</h3>
-    <p style={cardDescStyle}>
-      Configure timezone-aware booking rules, schedule custom opening calendar blocks, and establish session interval buffers.
-    </p>
-  </Link>
+            {/* SHORTCUT CARD 2: SCHEDULING MATRIX */}
+            <button onClick={() => navigate('/schedule')} style={{ ...actionCardStyle, textAlign: 'left', cursor: 'pointer', border: '1px solid rgba(61, 90, 69, 0.12)' }}>
+              <div style={iconBadgeStyle('#E07A5F')}>📅</div>
+              <h3 style={cardTitleStyle}>Availability Slots Matrix</h3>
+              <p style={cardDescStyle}>Configure timezone-aware booking rules, schedule custom opening calendar blocks, and establish session interval buffers.</p>
+            </button>
 
-  {/* CARD 3: ENCOUNTER NOTES SUITE */}
-  <Link to="/notes" style={actionCardStyle}>
-    <div style={iconBadgeStyle('#F4A261')}>📝</div>
-    <h3 style={cardTitleStyle}>Encounter Notes Suite</h3>
-    <p style={cardDescStyle}>
-      Compile historical treatment timelines and draft secure session notes using clinical SOAP documentation templates.
-    </p>
-  </Link>
+            {/* SHORTCUT CARD 3: SOAP NOTES SUITE */}
+            <button onClick={() => navigate('/notes')} style={{ ...actionCardStyle, textAlign: 'left', cursor: 'pointer', border: '1px solid rgba(61, 90, 69, 0.12)' }}>
+              <div style={iconBadgeStyle('#F4A261')}>📝</div>
+              <h3 style={cardTitleStyle}>Encounter Notes Suite</h3>
+              <p style={cardDescStyle}>Compile historical treatment timelines and draft secure session notes using clinical SOAP documentation templates.</p>
+            </button>
 
-  {/* CARD 4: LIVE MESSAGE HUB */}
-  <Link to="/portal" style={actionCardStyle}>
-    <div style={iconBadgeStyle('#E07A5F')}>💬</div>
-    <h3 style={cardTitleStyle}>Live Message Hub</h3>
-    <p style={cardDescStyle}>
-      Open direct, end-to-end communication channels with active clients using secure real-time WebSocket nodes [INDEX].
-    </p>
-  </Link>
+            {/* SHORTCUT CARD 4: WEBSOCKET LIVE MESSAGING HUB */}
+            <button onClick={() => navigate('/portal')} style={{ ...actionCardStyle, textAlign: 'left', cursor: 'pointer', border: '1px solid rgba(61, 90, 69, 0.12)' }}>
+              <div style={iconBadgeStyle('#E07A5F')}>💬</div>
+              <h3 style={cardTitleStyle}>Live Message Hub</h3>
+              <p style={cardDescStyle}>Open direct, end-to-end communication channels with active clients using secure real-time WebSocket nodes.</p>
+            </button>
 
-</div>
+            {/* SHORTCUT CARD 5: PERFORMANCE ANALYTICS */}
+            <button onClick={() => navigate('/analytics')} style={{ ...actionCardStyle, textAlign: 'left', cursor: 'pointer', border: '1px solid rgba(61, 90, 69, 0.12)', borderTop: '4px solid #2A9D8F' }}>
+              <div style={iconBadgeStyle('#2A9D8F')}>📊</div>
+              <h3 style={cardTitleStyle}>Performance & Financial Matrix</h3>
+              <p style={cardDescStyle}>Track dynamic revenue volume distributions, review settlement streams, and monitor subscriber velocity.</p>
+            </button>
 
+          </div>
         </div>
       </main>
     </div>
   );
 }
 
-/* --- Strict Clean Style Tokens Blocks --- */
 const metricLabelStyle = { fontSize: '12px', fontWeight: '700', color: '#5C6760', textTransform: 'uppercase', letterSpacing: '0.04em' };
 const metricValueStyle = { fontSize: '28px', fontWeight: '800', color: '#1E2922', marginTop: '6px' };
 
 const actionCardStyle = {
   display: 'block',
   padding: '28px 24px',
-  textDecoration: 'none',
-  color: 'inherit',
   background: '#FFFFFF',
-  border: '1px solid rgba(61, 90, 69, 0.12)',
   borderRadius: '14px',
   boxShadow: '0 10px 25px -5px rgba(61, 90, 69, 0.04)',
-  transition: 'transform 0.2s ease-out, border-color 0.2s ease-out'
+  transition: 'transform 0.2s ease-out',
+  boxSizing: 'border-box',
+  fontFamily: 'inherit'
 };
 
 const iconBadgeStyle = (color) => ({
