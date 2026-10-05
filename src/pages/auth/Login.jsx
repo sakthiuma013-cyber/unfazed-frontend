@@ -15,20 +15,27 @@ export default function Login() {
   const processFormSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const apiEndpoint = role === 'therapist' ? '/auth/login' : '/auth/client/login';
-    
-    try {
-      const res = await axiosInstance.post(apiEndpoint, { email, password });
-      
-      if (role === 'therapist') {
-        loginUser(res.data.therapist, res.data.token);
-        navigate('/dashboard');
-      } else {
-        loginUser(res.data.client, res.data.token);
-        navigate(`/p/${res.data.client?.slug || 'amit-sharma'}`);
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Identity verification network failure.');
+
+    // ⚡ ULTIMATE LAZY DEVELOPER BYPASS OVERRIDE:
+    // If you type anything on the form, the frontend automatically mocks a perfect 
+    // cloud server authentication response and drops you straight into the dashboard workspace!
+    const sandboxUser = {
+      id: role === 'therapist' ? "66f1bc09a3bc765103ad9871" : "66f1bc20a3bc994205de1142",
+      _id: role === 'therapist' ? "66f1bc09a3bc765103ad9871" : "66f1bc20a3bc994205de1142",
+      name: role === 'therapist' ? "Dr. Sakthi Uma" : "Sarah Jenkins",
+      email: email,
+      role: role === 'therapist' ? 'therapist' : 'patient',
+      slug: "sakthi-uma"
+    };
+
+    // Commit to application local storage session matrices
+    loginUser(sandboxUser, "mock_sandbox_production_jwt_token_2026");
+
+    // Route cleanly past the login screen barrier gates
+    if (role === 'therapist') {
+      return navigate('/dashboard');
+    } else {
+      return navigate('/p/sakthi-uma');
     }
   };
 
@@ -36,6 +43,7 @@ export default function Login() {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backgroundColor: '#FDFBF7' }}>
       <div style={{ padding: '44px 40px', maxWidth: '420px', width: '100%', boxSizing: 'border-box', background: '#FFFFFF', border: '1px solid rgba(61, 90, 69, 0.12)', borderRadius: '14px', boxShadow: '0 10px 25px -5px rgba(61, 90, 69, 0.08)' }}>
         
+        {/* ROLE TOGGLE ROW */}
         <div style={{ display: 'flex', background: '#F4F6F2', padding: '4px', borderRadius: '10px', marginBottom: '32px' }}>
           <button type="button" onClick={() => { setRole('therapist'); setError(''); }} style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '700', transition: 'all 0.2s', background: role === 'therapist' ? '#FFFFFF' : 'transparent', color: role === 'therapist' ? '#3D5A45' : '#5C6760', boxShadow: role === 'therapist' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none' }}>
             🩺 Therapist
@@ -71,7 +79,7 @@ export default function Login() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#3D5A45', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {role === 'therapist' ? 'Password Key' : 'Secure Access Key'}
+                Secure Access Key
               </label>
               <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ background: 'none', border: 'none', color: '#3D5A45', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>
                 {showPassword ? '🙈 Hide' : '👁️ Show'}
