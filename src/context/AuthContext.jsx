@@ -4,27 +4,32 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      localStorage.setItem('token', token);
-    } else {
-      localStorage.removeItem('token');
-      setUser(null);
+    const savedUser = localStorage.getItem('user');
+    const savedToken = localStorage.getItem('token');
+    if (savedUser && savedToken) {
+      setUser(JSON.parse(savedUser));
+      setToken(savedToken);
     }
     setLoading(false);
-  }, [token]);
+  }, []);
 
-  const loginUser = (userData, sessionToken) => {
-    setToken(sessionToken);
+  const loginUser = (userData, tokenString) => {
+    setToken(tokenString);
     setUser(userData);
+    localStorage.setItem('token', tokenString);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logoutUser = () => {
     setToken(null);
+    setUser(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.clear(); // Flushes all lingering session tokens completely
   };
 
   return (

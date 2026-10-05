@@ -74,7 +74,8 @@ export const AppRoutes = () => (
 
     {/* 🩺 PROTECTED SPECIALIST ENTERPRISE CONTROL DASHBOARDS MAPS */}
     <Route path="/dashboard" element={<ProtectionGate><Dashboard /></ProtectionGate>} />
-    <Route path="/clients" element={<ProtectionGate><Clients /></ProtectionGate>} />
+{/* Add this line explicitly into your AppRoutes export block definition right near line 55 */}
+<Route path="/clients" element={<ProtectionGate><Clients /></ProtectionGate>} />
     <Route path="/schedule" element={<ProtectionGate><Schedule /></ProtectionGate>} />
     <Route path="/notes" element={<ProtectionGate><Notes /></ProtectionGate>} />
     <Route path="/analytics" element={<ProtectionGate><Analytics /></ProtectionGate>} />

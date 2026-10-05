@@ -7,34 +7,47 @@ import { InvoiceView } from '../../components/payments/InvoiceView';
 import { ChatWindow } from '../../components/chat/ChatWindow';
 
 export default function BookingPage() {
-  const { user } = useContext(AuthContext);
-
+  const { user, token } = useContext(AuthContext);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [activeTab, setActiveTab] = useState('about'); 
   const [settled, setSettled] = useState(false);
   const [paymentId, setPaymentId] = useState('');
   const [statusMessage, setStatusMessage] = useState({ text: '', type: '' });
-  const [assignedPractitioner, setAssignedPractitioner] = useState({ name: 'Loading Doctor Profile...', id: '' });
+  const [assignedPractitioner, setAssignedPractitioner] = useState({ name: 'Dr. Sakthi Uma', id: '66f1bc09a3bc765103ad9871' });
 
   const baseSessionRoomId = "room_session_9942";
 
   useEffect(() => {
-    axiosInstance.get('/auth/my-therapist')
-      .then(res => {
-        if (res.data && res.data.therapist) {
-          setAssignedPractitioner({
-            name: res.data.therapist.name,
-            id: res.data.therapist.id
-          });
-        }
-      })
-      .catch(() => {
-        setAssignedPractitioner({
-          name: 'Dr. Sakthi Uma',
-          id: '66f1bc09a3bc765103ad9871'
+    // Queries the live relation maps endpoint only if a valid patient session is online
+    if (token) {
+      axiosInstance.get('/auth/my-therapist')
+        .then(res => {
+          if (res.data && res.data.therapist) {
+            setAssignedPractitioner({
+              name: res.data.therapist.name,
+              id: res.data.therapist.id || res.data.therapist._id
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("Running fallback context staging logs: ", err.message);
         });
-      });
-  }, [user]);
+    }
+  }, [token]);
+
+  // AUTHENTICATION PROTECTION CHECK: Rejects anonymous dashboard scraping completely
+  if (!token || user?.role !== 'patient') {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FDFBF7', padding: '20px', fontFamily: 'inherit' }}>
+        <div style={{ padding: '32px', background: '#FFFFFF', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '12px', textAlign: 'center', maxWidth: '400px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+          <span style={{ fontSize: '32px' }}>🔒</span>
+          <h3 style={{ margin: '12px 0 6px 0', color: '#1E2922', fontWeight: '700' }}>Secure Patient Access Required</h3>
+          <p style={{ color: '#5C6760', fontSize: '14px', margin: '0 0 20px 0', lineHeight: '1.5' }}>You must be logged in as a verified patient to access this personalized care profile environment.</p>
+          <a href="/login" style={{ display: 'block', padding: '12px', background: '#10B981', color: 'white', textDecoration: 'none', borderRadius: '8px', fontWeight: '700', fontSize: '14px' }}>Return to Login</a>
+        </div>
+      </div>
+    );
+  }
 
   const mockScheduleSlots = [
     { id: 1, day: 'Monday Session', time: '09:00 AM - 09:45 AM' },
@@ -45,7 +58,7 @@ export default function BookingPage() {
   const handleSlotConfirm = (slot) => {
     setSelectedSlot(slot.id);
     setStatusMessage({
-      text: `📆 Care session held provisionally for ${slot.day} (${slot.time}). Settle dues in the billing panel to confirm.`,
+      text: `📆 Care session provisionally held for ${slot.day} (${slot.time}). Head to the billing tab to finalize your appointment reservation.`,
       type: 'success'
     });
   };
@@ -56,10 +69,10 @@ export default function BookingPage() {
       
       <div style={{ background: 'linear-gradient(135deg, #3D5A45 0%, #2F4535 100%)', color: 'white', padding: '48px 40px', textAlign: 'center' }}>
         <h1 style={{ fontSize: '32px', margin: '0 0 8px 0', fontWeight: '700' }}>Patient Wellness Dashboard</h1>
-        <p style={{ color: '#D8E2DC', fontSize: '16px', margin: '0 0 16px 0' }}>Welcome back to your secure AuraHealth health space</p>
+        <p style={{ color: '#D8E2DC', fontSize: '16px', margin: '0 0 16px 0' }}>Welcome back, <strong style={{ color: '#FFFFFF' }}>{user.name}</strong></p>
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-          <span style={{ background: 'rgba(255,255,255,0.15)', padding: '6px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: '700', letterSpacing: '0.02em' }}>
-            🔒 Verified Account Status: Active
+          <span style={{ background: 'rgba(255,255,255,0.15)', padding: '6px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: '700' }}>
+            🔒 Secure Patient Workspace
           </span>
         </div>
       </div>
@@ -129,12 +142,11 @@ export default function BookingPage() {
               ) : (
                 <CheckoutForm 
                   amount={1500} 
-                  client_id={user?.id || user?._id || "66f1bc20a3bc994205de1142"} 
-                  therapist_id={assignedPractitioner.id || "66f1bc09a3bc765103ad9871"} 
+                  client_id={user?.id || user?._id} 
+                  therapist_id={assignedPractitioner.id} 
                   onSuccess={(res) => {
                     setPaymentId(res.razorpay_payment_id || 'pay_sim_9988');
                     setSettled(true);
-                    setStatusMessage({ text: '⚡ Transaction settled successfully! Your official tax receipt invoice is rendered below.', type: 'success' });
                   }}
                   onError={(err) => setStatusMessage({ text: `❌ Processing Halt: ${err}`, type: 'error' })}
                 />
@@ -147,16 +159,9 @@ export default function BookingPage() {
               <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', color: '#1E2922', fontWeight: '700' }}>Live Communication Terminal</h3>
               <p style={{ color: '#5C6760', fontSize: '14px', marginBottom: '20px' }}>Exchange instant messages safely with your clinical practitioner over our secure, real-time messaging network.</p>
               
-              <ChatWindow 
-                roomId={baseSessionRoomId}
-                userId={user?.id || user?._id || "client_ananya_iyer"}
-                userName={user?.name || "Harry Styles (Patient)"}
-              />
-            </div>
-          )}
-
-        </div>
-      </main>
-    </div>
-  );
-}
+             {/* ⚡ SYNTAX CORRECTION: Properly wrapped in backticks inside the JSX curly braces */}
+<ChatWindow 
+  roomId={baseSessionRoomId}
+  userId={user?.id || user?._id}
+  userName={`${user?.name || 'Harry Styles'} (Patient)`}
+/>
